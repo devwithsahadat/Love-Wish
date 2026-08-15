@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Love ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* বেসিক সেটআপ */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: #050002; color: #fff; font-family: 'Poppins', sans-serif; overflow: hidden; }
+
+        /* গ্লাস ইফেক্ট */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 51, 102, 0.2); border-radius: 15px;
+            box-shadow: 0 8px 32px 0 rgba(255, 51, 102, 0.15);
+            padding: 20px; text-align: center; width: 100%;
+        }
+
+        /* প্রথম স্ক্রিন */
+        #welcome-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: flex; justify-content: center; align-items: center; flex-direction: column;
+            background: radial-gradient(circle, #1a000d, #000); z-index: 50;
+        }
+
+        /* বাটন স্টাইল */
+        .heart-btn {
+            background: linear-gradient(135deg, #ff3366, #ff0040); color: white; border: none; 
+            padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.5); font-weight: 600; font-family: 'Poppins', sans-serif;
+            animation: heartbeatBtn 1.5s infinite; transition: all 0.3s;
+        }
+        .heart-btn:hover { transform: scale(1.1) translateY(-5px); box-shadow: 0 15px 40px rgba(255, 51, 102, 0.8); }
+        @keyframes heartbeatBtn { 0% { transform: scale(1); } 25% { transform: scale(1.05); } 50% { transform: scale(1); } 75% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* হ্যাকার ম্যাট্রিক্স ইফেক্ট */
+        canvas { display: none; position: fixed; top: 0; left: 0; z-index: 10; }
+
+        /* কাউন্টডাউন */
+        #countdown-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: none; justify-content: center; align-items: center;
+            background: radial-gradient(circle, #1a000d, #000); z-index: 20; opacity: 0; transition: opacity 0.5s ease;
+        }
+        .count-number { 
+            font-family: 'Cinzel', serif; font-size: 10rem; color: #ff3366; 
+            text-shadow: 0 0 40px #ff3366, 0 0 80px #ff0040; 
+            animation: pulseCount 1s ease-in-out infinite; text-align: center;
+        }
+        @keyframes pulseCount { 0% { transform: scale(0.8); opacity: 0; } 50% { transform: scale(1.2); opacity: 1; } 100% { transform: scale(1); opacity: 0; } }
+
+        /* ট্যাপ টু ওপেন স্ক্রিন */
+        #interaction-screen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            display: none; justify-content: center; align-items: center; flex-direction: column;
+            background: radial-gradient(circle, #260013, #000); z-index: 30;
+        }
+        .interaction-title { font-family: 'Cinzel', serif; font-size: 1.8rem; color: #ff3366; margin-bottom: 20px; text-shadow: 0 0 20px #ff3366; text-align: center; padding: 0 20px;}
+
+        /* মেইন কন্টেন্ট */
+        #main-content {
+            position: relative; z-index: 40; height: 100vh; width: 100vw;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            background: radial-gradient(circle at center, #1f000f 0%, #050002 100%); 
+            opacity: 0; transition: opacity 2s ease; overflow-y: auto; padding: 15px;
+        }
+
+        /* ভাসমান হার্ট অ্যানিমেশন */
+        .bg-hearts { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; overflow: hidden; }
+        .heart-shape {
+            position: absolute; bottom: -10vh; background-color: #ff3366; width: 20px; height: 20px; transform: rotate(-45deg);
+            animation: floatUp 10s infinite ease-in; opacity: 0.3; filter: drop-shadow(0 0 10px #ff3366);
+        }
+        .heart-shape::before, .heart-shape::after { content: ''; position: absolute; width: 20px; height: 20px; background-color: #ff3366; border-radius: 50%; }
+        .heart-shape::before { top: -10px; left: 0; } .heart-shape::after { top: 0; left: 10px; }
+        @keyframes floatUp { 0% { transform: translateY(0) rotate(-45deg) scale(0.5); opacity: 0; } 50% { opacity: 0.6; } 100% { transform: translateY(-120vh) rotate(-45deg) scale(1.5); opacity: 0; } }
+
+        /* ইউটিউব রেশিও (১৬:৯) ভিডিও কন্টেইনার */
+        .video-wrapper {
+            width: 100%; max-width: 800px; /* বড় স্ক্রিনের জন্য ম্যাক্সিমাম সাইজ */
+            aspect-ratio: 16 / 9; /* ইউটিউবের রেশিও */
+            margin-bottom: 15px; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.4); border: 2px solid #ff3366; background: #000;
+            display: flex; justify-content: center; align-items: center;
+        }
+        video { width: 100%; height: 100%; object-fit: contain; display: block; } /* object-fit: contain ভিডিওটিকে কাটতে দিবে না */
+
+        /* উইশ টেক্সট (ছোট করা হয়েছে) */
+        .wish-container { max-width: 800px; margin-bottom: 10px; padding: 15px; }
+        .wish-text { font-size: 0.95rem; line-height: 1.6; color: #e0e0e0; margin-bottom: 12px; font-weight: 300; letter-spacing: 0.5px; }
+        .message-bottom { 
+            font-family: 'Cinzel', serif; font-size: 1.8rem; font-weight: 700; color: #ff3366; 
+            text-shadow: 0 0 15px rgba(255, 51, 102, 0.8);
+            background: -webkit-linear-gradient(#ff3366, #ff80a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+
+        /* মোবাইল রেসপন্সিভ (ছোট স্ক্রিনের জন্য আরও অ্যাডজাস্টমেন্ট) */
+        @media (max-width: 768px) {
+            .video-wrapper { border: 1px solid #ff3366; border-radius: 8px; }
+            .wish-text { font-size: 0.85rem; line-height: 1.5; margin-bottom: 10px; }
+            .message-bottom { font-size: 1.4rem; }
+            .interaction-title { font-size: 1.5rem; }
+            .heart-btn { font-size: 1rem; padding: 12px 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- লোকাল অডিও ফাইল (অ্যানিমেশনের সময় বাজবে) -->
+    <audio id="bg-audio" src="audio.mp3" loop></audio>
+
+    <!-- প্রথম স্ক্রিন -->
+    <div id="welcome-screen">
+        <h2 style="font-family: 'Cinzel', serif; color: #ff3366; margin-bottom: 20px; font-size: 1.5rem; text-align: center;">A Special Gift For You...</h2>
+        <button class="heart-btn" onclick="startJourney()">Open Your Surprise ❤️</button>
+    </div>
+
+    <!-- হ্যাকার ম্যাট্রিক্স ইফেক্ট -->
+    <canvas id="matrix"></canvas>
+
+    <!-- ৩, ২, ১, GO কাউন্টডাউন -->
+    <div id="countdown-container">
+        <div class="count-number" id="count-number">3</div>
+    </div>
+
+    <!-- ট্যাপ টু ওপেন স্ক্রিন -->
+    <div id="interaction-screen">
+        <h2 class="interaction-title">Almost there...</h2>
+        <button class="heart-btn" onclick="startFinalSurprise()">Tap to Open ❤️</button>
+    </div>
+
+    <!-- মেইন ভিডিও এবং উইশ স্ক্রিন -->
+    <div id="main-content">
+        <div class="bg-hearts" id="hearts-container"></div>
+
+        <!-- লোকাল ভিডিও (ইউটিউব রেশিও ১৬:৯) -->
+        <div class="video-wrapper">
+            <video id="my-video" src="love.mp4" loop playsinline></video>
+        </div>
+
+        <!-- রোমান্টিক উইশ -->
+        <div class="glass-panel wish-container">
+            <p class="wish-text">
+                এই শোকেসের প্রতিটি ফ্রেমের মতোই আমাদের কাটানো প্রতিটি মুহূর্ত আমার কাছে ভীষণ স্পেশাল। তোমার হাসি আর তোমার ভালোবাসা আমার পুরো পৃথিবী আলোকিত করে রাখে। এই ভিডিওটার মতোই আমাদের ভালোবাসার সুন্দর মুহূর্তগুলো যেন সারা জীবন এভাবেই লুপে চলতে থাকে।
+            </p>
+            <div class="message-bottom">I like you & I love you ❤️</div>
+        </div>
+    </div>
+
+    <script>
+        // ভাসমান হার্ট তৈরি করা
+        const heartsContainer = document.getElementById('hearts-container');
+        for(let i=0; i<15; i++) {
+            let heart = document.createElement('div');
+            heart.classList.add('heart-shape');
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            heart.style.animationDelay = Math.random() * 5 + 's';
+            heartsContainer.appendChild(heart);
+        }
+
+        // ম্যাট্রিক্স সেটআপ
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        let matrixInterval;
+        
+        function initMatrix() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            canvas.style.display = 'block';
+
+            const charsArray = '01♥♡'.split('');
+            const fontSize = 16;
+            const columns = canvas.width / fontSize;
+            const drops = Array(Math.floor(columns)).fill(1);
+
+            function drawMatrix() {
+                ctx.fillStyle = 'rgba(5, 0, 2, 0.1)'; 
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.fillStyle = '#ff3366';
+                ctx.font = fontSize + 'px monospace';
+
+                for (let i = 0; i < drops.length; i++) {
+                    const text = charsArray[Math.floor(Math.random() * charsArray.length)];
+                    ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                    if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+                    drops[i]++;
+                }
+            }
+            matrixInterval = setInterval(drawMatrix, 40);
+        }
+
+        // ধাপ ১: Journey শুরু
+        function startJourney() {
+            document.getElementById('welcome-screen').style.display = 'none';
+            document.getElementById('bg-audio').play(); 
+            
+            initMatrix(); 
+
+            setTimeout(() => {
+                clearInterval(matrixInterval);
+                canvas.style.display = 'none'; 
+
+                const countdownContainer = document.getElementById('countdown-container');
+                const countNumber = document.getElementById('count-number');
+                countdownContainer.style.display = 'flex';
+                setTimeout(() => countdownContainer.style.opacity = '1', 50);
+
+                let count = 3;
+                const countInterval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        countNumber.innerText = count;
+                    } else if (count === 0) {
+                        countNumber.innerText = "GO!"; 
+                    } else {
+                        clearInterval(countInterval);
+                        countdownContainer.style.opacity = '0';
+                        setTimeout(() => {
+                            countdownContainer.style.display = 'none';
+                            document.getElementById('interaction-screen').style.display = 'flex'; 
+                        }, 500);
+                    }
+                }, 1000);
+            }, 3500); 
+        }
+
+        // ধাপ ২: ফাইনাল সারপ্রাইজ
+        function startFinalSurprise() {
+            document.getElementById('interaction-screen').style.display = 'none';
+            
+            const bgAudio = document.getElementById('bg-audio');
+            bgAudio.pause();
+            bgAudio.currentTime = 0; 
+
+            const mainContent = document.getElementById('main-content');
+            mainContent.style.display = 'flex';
+            setTimeout(() => mainContent.style.opacity = '1', 100);
+
+            document.getElementById('my-video').play();
+        }
+
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+        });
+    </script>
+</body>
+</html>
